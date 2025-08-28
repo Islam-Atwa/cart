@@ -1,61 +1,44 @@
-import { createSlice } from '@reduxjs/toolkit';
 
-const initialState = {
-  items: [], // Array of { id, name, price, quantity }
-  totalQuantity: 0,
-  totalAmount: 0,
-};
+import { createSlice } from '@reduxjs/toolkit'
 
+// Initial state of cart 
+
+const initialState={
+  items:[],   // array of cart [id, name, price, quntity]
+  totalQuantity:0,
+  totalAmount:0
+}
+
+// create cart slice 
 const cartSlice = createSlice({
-  name: 'cart', // Name of the slice, used as a prefix for action types
+  name: 'cart',
   initialState,
-  reducers: {
-    // Action to add an item to the cart
-    addItemToCart: (state, action) => {
+  
+  reducers:{
+    // action to add item to cart
+    addItemToCart(state, action) {
       const newItem = action.payload;
-      const existingItem = state.items.find(item => item.id === newItem.id);
-
+      // هل المنتج اللي المستخدم ضافه موجود في السله ام لأ
+      const existingItem = state.items.find(item => item.id === newItem.id); // check if item added using by user already exists in cart
       state.totalQuantity++;
-      if (!existingItem) {
+
+      // لو المنتج  موجود في السله
+      if (existingItem){ // if item  exists in cart 
+        existingItem.quantity++;
+        existingItem.totalPrice =existingItem.totalPrice + newItem.price; 
+      }
+      else{ // if item  not exists in cart  لو المنتج غير موجود في السله
+          // add new item to cart
         state.items.push({
           id: newItem.id,
           name: newItem.name,
           price: newItem.price,
-          quantity: 1,
           totalPrice: newItem.price,
+          quantity: 1
         });
-      } else {
-        existingItem.quantity++;
-        existingItem.totalPrice = existingItem.totalPrice + newItem.price;
       }
-      state.totalAmount = state.items.reduce((acc, item) => acc + item.totalPrice, 0);
+    // total amount of cart حساب إجمالي قيمة الكارت عن طريق جمع كل الأسعار  الكليه لكل المنتجات الموجودة في الكارت
+    state.totalAmount = state.items.reduce((acc, item)=> acc + item.totalPrice, 0);
     },
-
-    // Action to remove an item from the cart
-    removeItemFromCart: (state, action) => {
-      const id = action.payload;
-      const existingItem = state.items.find(item => item.id === id);
-
-      if (existingItem) {
-        state.totalQuantity--;
-        if (existingItem.quantity === 1) {
-          state.items = state.items.filter(item => item.id !== id);
-        } else {
-          existingItem.quantity--;
-          existingItem.totalPrice = existingItem.totalPrice - existingItem.price;
-        }
-        state.totalAmount = state.items.reduce((acc, item) => acc + item.totalPrice, 0);
-      }
-    },
-
-    // Action to clear the entire cart
-    clearCart: (state) => {
-      state.items = [];
-      state.totalQuantity = 0;
-      state.totalAmount = 0;
-    },
-  },
-});
-
-export const { addItemToCart, removeItemFromCart, clearCart } = cartSlice.actions;
-export default cartSlice.reducer;
+  }
+})
