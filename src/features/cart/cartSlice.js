@@ -15,7 +15,7 @@ const cartSlice = createSlice({
   initialState,
   
   reducers:{
-    // action to add item to cart
+    // Action to add item to cart
     addItemToCart:(state, action)=>{
       const newItem = action.payload;
       // هل المنتج اللي المستخدم ضافه موجود في السله ام لأ
@@ -41,23 +41,35 @@ const cartSlice = createSlice({
     state.totalAmount = state.items.reduce((acc, item)=> acc + item.totalPrice, 0);
     },
 
-    // action to remove item from cart 
+    // Action to remove item from cart or decrease item quantity
     removeItemFromCart:(state, action)=>{
       const id= action.payload;
       const existingItem = state.items.find(item => item.id === id);
 
+      // لو المنتج  موجود في السله
       if(existingItem){
-        state.totalQuantity--;
+        state.totalQuantity--; //  قلل العدد الكلي للمنتجات 
 
+        // لو الكميه للمنتج 1 يبقي احذفه من السله 
         if(existingItem.quantity ===1){
           state.items = state.items.filter(item=> item.id === id);
         }
+        // لو الكميه للمنتج اكبر من 1 يبقي قلل الكميه بواحد
         else{
           existingItem.quantity--;
+          // قلل السعر الكلي للمنتج بطرح سعر المنتج
           existingItem.totalPrice= existingItem.totalPrice - existingItem.price;
         }
+        // total amount of cart حساب إجمالي قيمة الكارت عن طريق جمع كل الأسعار  الكليه لكل المنتجات الموجودة في الكارت
         state.totalAmount = state.items.reduce((acc, item)=> acc + item.totalPrice, 0);
       }
     },
-  }
-})
+
+    // Action te clear all cart
+    clearState:(state)=>{
+      state.items =[];
+      state.totalQuantity=0;
+      state.totalAmount=0;
+    },
+  },
+});
