@@ -1,15 +1,15 @@
-import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { removeItemFromCart, clearCart } from '../features/cart/cartSlice';
-import './CartView.css'; // Optional: for basic styling
+import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { removeItemFromCart ,clearCart } from "../features/cart/cartSlice";
+import "./CartView.css"; 
 
-const CartView = () => {
-  const cartItems = useSelector((state) => state.cart.items);
+const CartView =()=>{
+  const cartItems = useSelector((state)=>state.cart.items);
+  const totalAmount = useSelector((state)=>state.cart.totalAmount);
   const totalQuantity = useSelector((state) => state.cart.totalQuantity);
-  const totalAmount = useSelector((state) => state.cart.totalAmount);
   const dispatch = useDispatch();
 
-  return (
+  return(
     <div className="cart-view">
       <h2>Shopping Cart</h2>
       {cartItems.length === 0 ? (
@@ -31,6 +31,7 @@ const CartView = () => {
       )}
     </div>
   );
+  
 };
 
 export default CartView;
